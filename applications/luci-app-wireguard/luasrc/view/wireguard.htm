@@ -243,17 +243,18 @@ for ikey, iface in pairs(data) do
 	local pkey, peer
 	for pkey, peer in pairs(iface.peers) do
 		local desc
+		local peer_name
 		cur:foreach("network", "wireguard_" .. ikey, function(s)
-			local key, value, tmp_desc, pub_key
+			local key, value, pub_key
 			for key, value in pairs(s) do
 				if key == "description" then
-					tmp_desc = value
+					peer_name = value
 				end
 				if value == peer.public_key then
 					pub_key = value
 				end
-				if pub_key and tmp_desc then
-					desc = ': ' ..tmp_desc
+				if pub_key and peer_name then
+					desc = ': ' ..peer_name
 				end
 			end
 		end)
@@ -270,6 +271,17 @@ for ikey, iface in pairs(data) do
 							<div class="td" id="<%=ikey%>_<%=peer.public_key%>_info" style="flex: 0 1 90%; text-align: left; vertical-align:middle; padding: 3px;border-top: 0px;"><em><%:Collecting data...%></em></div>
 						</div>
 					</div>
+					<%-                                                                                                                        
+					local qr_code                                                                                                              
+					local peer_conf                                                                                                            
+					peer_conf="/etc/wireguard/networks/lan/peers/" ..peer_name.. "/" ..peer_name.. ".conf"                                     
+					if fs.access("/usr/bin/qrencode") and fs.access(peer_conf) then                                                            
+						qr_code=luci.sys.exec("/usr/bin/qrencode --inline --8bit --type=SVG --output=- < '" ..peer_conf .. "' 2>/dev/null")
+						-%>                                                                                                                
+						<%=qr_code%><br />                                                                                                 
+						<%-                                                                                                                
+					end                                                                                                                        
+					-%> 
 				</div>
 			</div>
 		<%-
