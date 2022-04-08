@@ -278,7 +278,10 @@ for ikey, iface in pairs(data) do
 					if fs.access("/usr/bin/qrencode") and fs.access(peer_conf) then                                                            
 						qr_code=luci.sys.exec("/usr/bin/qrencode --inline --8bit --type=SVG --output=- < '" ..peer_conf .. "' 2>/dev/null")
 						-%>                                                                                                                
-						<%=qr_code%><br />                                                                                                 
+						<input class="btn cbi-button cbi-button-apply" type="button" name="qrcode_<%=peer_name%>" value="<%:Show/Hide QR-Code%>" onclick="toggle_qrcode(this)" />
+						<span class="cbi-value" style="display: none" id="qrcode_<%=peer_name%>">                                                                             
+							<%=qr_code%><br />                                                                                                                            
+						</span>                                                                                                
 						<%-                                                                                                                
 					end                                                                                                                        
 					-%> 
